@@ -1,188 +1,509 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>FgSDRONES</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Jockey+One&display=swap" rel="stylesheet">
+    <title>FgSDRONES | Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --primary: #2A9D8F;
+            --primary-dark: #1D7874;
+            --secondary: #264653;
+            --accent: #E9C46A;
+            --dark: #1A1A2E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28A745;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #2C3E50;
-            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--secondary);
+            color: var(--light);
+            line-height: 1.6;
         }
+        
         .header {
-            background-color: #5BAABF;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            font-family: 'Jockey One', sans-serif;
-            font-size: 36px;
-        }
-        .menu-icon {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            right: 0;
-            background-color: #34495E;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
             color: white;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-        .sidebar .closebtn {
-            position: absolute;
+            padding: 1.5rem 2rem;
+            position: fixed;
+            width: 100%;
             top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-        .content {
-            padding: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            background-color: #34495E;
-        }
-        .image-placeholder {
-            width: 300px;
-            height: 300px;
-            background-color: #000000;
-            margin-right: 20px;
-        }
-        .text-section {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .about {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .description {
-            font-size: 1em;
-            margin-bottom: 20px;
-            color: #BDC3C7;
-        }
-        .download-section {
-            text-align: left;
-        }
-        .download-section p {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .download-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .download-button {
-            background-color: #5BAABF;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            color: #FFFFFF;
             cursor: pointer;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: -280px;
+            background-color: white;
+            overflow-x: hidden;
+            transition: transform 0.3s ease-out;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            transform: translateX(-280px);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .closebtn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .sidebar-nav {
+            flex-grow: 1;
+        }
+        
+        .sidebar-nav a {
+            display: block;
+            padding: 0.8rem 0;
             text-decoration: none;
-            display: inline-block;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        .download-button i {
-            font-size: 1.5em;
-            margin-right: 10px;
+        
+        .sidebar-nav a:hover {
+            color: var(--primary);
         }
+        
+        .sidebar-nav a i {
+            margin-right: 0.8rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .language-toggle {
+            margin-top: auto;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .language-toggle:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background-color: var(--primary-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .media-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 300px;
+            object-fit: contain;
+            background-color: var(--dark);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
         .image-switcher {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
+        
         .image-switcher button {
-            background-color: #5BAABF;
+            background-color: var(--accent);
+            color: var(--dark);
             border: none;
-            padding: 10px;
-            margin: 0 5px;
-            color: #FFFFFF;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s;
         }
-        @media (max-width: 600px) {
-            .content {
-                flex-direction: column;
-                align-items: center;
+        
+        .image-switcher button:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .sketchfab-embed {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: none;
+        }
+        
+        .info-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .download-stats {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .download-count {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .download-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .download-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .download-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .download-button i {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+        
+        .sketchfab-credit {
+            font-size: 0.8rem;
+            color: var(--gray);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .sketchfab-credit a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .game-container {
+                grid-template-columns: 1fr;
             }
-            .image-placeholder {
-                margin-right: 0;
-                margin-bottom: 20px;
+            
+            .download-buttons {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header" onclick="location.href='index.html'">
-        FgSDRONES
+    <header class="header" onclick="location.href='index.html'">
+        <div class="logo">
+            <i class="fas fa-drone-alt"></i>
+            <span>FgSDRONES</span>
+        </div>
         <div class="menu-icon" onclick="openNav(event)">
             <i class="fas fa-bars"></i>
         </div>
-    </div>
+    </header>
+
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#products" onclick="setLanguage('en')">Products</a>
-        <a href="sim.html" onclick="setLanguage('en')"> Web simulator</a>
-        <a href="#progect2" onclick="setLanguage('en')">Unity game</a>
-        <a href="#progect3" onclick="setLanguage('en')">Ide and drones</a>
-        <a href="javascript:void(0)" onclick="toggleLanguage()">Switch Language</a>
-    </div>
-    <div class="content">
-        <div>
-            <img alt="Placeholder image" class="image-placeholder" id="main-image" height="300" src="1.png" width="300"/>
-            <div class="image-switcher">
-                <button onclick="switchImage('1.png')">1</button>
-                <button onclick="switchImage('2.png')">2</button>
-                <button onclick="switchImage('3.png')">3</button>
-            </div>
+        <div class="sidebar-header">
+            <div class="sidebar-title" data-i18n="menu">Menu</div>
+            <div class="closebtn" onclick="closeNav()">&times;</div>
         </div>
-        <div class="text-section">
-            <div class="about">About</div>
-            <div class="download-section">
-                <p>downloaded: <span id="download-count">0</span> times</p>
+        <nav class="sidebar-nav">
+            <a href="products.html"><i class="fas fa-box-open"></i><span data-i18n="sidebar.products">Products</span></a>
+            <a href="sim.html"><i class="fas fa-laptop-code"></i><span data-i18n="sidebar.simulator">Web Simulator</span></a>
+            <a href="game.html"><i class="fas fa-gamepad"></i><span data-i18n="sidebar.unityGame">Unity Game</span></a>
+            <a href="ide.html"><i class="fas fa-code"></i><span data-i18n="sidebar.ide">Drone IDE</span></a>
+            <a href="about.html"><i class="fas fa-file-alt"></i><span data-i18n="sidebar.docs">Documentation</span></a>
+        </nav>
+        <div class="language-toggle" onclick="toggleLanguage()">
+            <i class="fas fa-language"></i> <span data-i18n="language.toggle">Switch to Russian</span>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <div class="game-container">
+            <div class="media-section">
+                <img src="1.png" alt="FgSDRONES game screenshot" class="image-preview" id="main-image">
+                <div class="image-switcher">
+                    <button onclick="switchImage('1.png')">1</button>
+                    <button onclick="switchImage('2.png')">2</button>
+                    <button onclick="switchImage('3.png')">3</button>
+                </div>
+                
+                <iframe class="sketchfab-embed" title="sci-fi bear" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/a20ef759574d47689016667c1188af0a/embed"></iframe>
+                <p class="sketchfab-credit">
+                    <a href="https://sketchfab.com/3d-models/sci-fi-bear-a20ef759574d47689016667c1188af0a?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow">sci-fi bear</a> by <a href="https://sketchfab.com/fgsd?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow">fgsd</a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow">Sketchfab</a>
+                </p>
+            </div>
+            
+            <div class="info-section">
+                <h2 class="section-title" data-i18n="game.title">FgSDRONES Game</h2>
+                <p class="description" data-i18n="game.description">This is an open-world game where you need to program drones and survive.</p>
+                
+                <div class="download-stats" data-i18n="game.downloads">Downloads: <span class="download-count" id="download-count">0</span></div>
+                
                 <div class="download-buttons">
-                    <a class="download-button" download="" href="https://github.com/yourusername/yourrepository/raw/main/yourfile-windows.zip" onclick="incrementDownloadCount()">
-                        <i class="fab fa-windows"></i> Windows
+                    <a href="https://github.com/yourusername/yourrepository/raw/main/yourfile-windows.zip" class="download-button" onclick="incrementDownloadCount()">
+                        <i class="fab fa-windows"></i>
+                        <span data-i18n="download.windows">Windows</span>
                     </a>
-                    <a class="download-button" download="" href="https://github.com/yourusername/yourrepository/raw/main/yourfile-mac.zip" onclick="incrementDownloadCount()">
-                        <i class="fab fa-apple"></i> Mac
+                    <a href="https://github.com/yourusername/yourrepository/raw/main/yourfile-mac.zip" class="download-button" onclick="incrementDownloadCount()">
+                        <i class="fab fa-apple"></i>
+                        <span data-i18n="download.mac">Mac OS</span>
                     </a>
                 </div>
             </div>
-            <div class="description">Это игра с открытым миром, где нужно программировать дроны и выживать.</div>
-            <div class="sketchfab-embed-wrapper"> 
-                <iframe title="sci-fi bear" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/a20ef759574d47689016667c1188af0a/embed"> 
-                </iframe> 
-                <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;"> 
-                    <a href="https://sketchfab.com/3d-models/sci-fi-bear-a20ef759574d47689016667c1188af0a?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> sci-fi bear </a> 
-                    by <a href="https://sketchfab.com/fgsd?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> fgsd </a>
-                    on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=a20ef759574d47689016667c1188af0a" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
-                </p>
-            </div>
         </div>
-    </div>
-    <script src="script.js"></script>
+    </main>
+
+    <footer class="footer">
+        <div class="copyright" data-i18n="footer.copyright">
+            &copy; 2024 FgSDRONES. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Language management module
+        const LanguageManager = {
+            currentLanguage: 'en',
+            
+            translations: {
+                en: {
+                    "menu": "Menu",
+                    "sidebar.products": "Products",
+                    "sidebar.simulator": "Web Simulator",
+                    "sidebar.unityGame": "Unity Game",
+                    "sidebar.ide": "Drone IDE",
+                    "language.toggle": "Switch to Russian",
+                    "game.title": "FgSDRONES Game",
+                    "game.description": "This is an open-world game where you need to program drones and survive.",
+                    "game.downloads": "Downloads:",
+                    "download.windows": "Windows",
+                    "download.mac": "Mac OS",
+                    "footer.copyright": "© 2024 FgSDRONES. All rights reserved."
+                },
+                ru: {
+                    "menu": "Меню",
+                    "sidebar.products": "Продукты",
+                    "sidebar.simulator": "Веб симулятор",
+                    "sidebar.unityGame": "Игра на Unity",
+                    "sidebar.ide": "Редактор кода",
+                    "language.toggle": "Переключить на Английский",
+                    "game.title": "Игра FgSDRONES",
+                    "game.description": "Это игра с открытым миром, где нужно программировать дроны и выживать.",
+                    "game.downloads": "Скачиваний:",
+                    "download.windows": "Windows",
+                    "download.mac": "Mac OS",
+                    "footer.copyright": "© 2024 FgSDRONES. Все права защищены."
+                }
+            },
+
+            init() {
+                this.loadLanguagePreference();
+                this.applyLanguage(this.currentLanguage);
+            },
+
+            loadLanguagePreference() {
+                const savedLanguage = localStorage.getItem('fgsdronesLanguage');
+                if (savedLanguage) {
+                    this.currentLanguage = savedLanguage;
+                }
+            },
+
+            toggleLanguage() {
+                const newLanguage = this.currentLanguage === 'en' ? 'ru' : 'en';
+                this.setLanguage(newLanguage);
+            },
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('fgsdronesLanguage', lang);
+                this.applyLanguage(lang);
+            },
+
+            applyLanguage(lang) {
+                const translations = this.translations[lang];
+                
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[key]) {
+                        element.textContent = translations[key];
+                    }
+                });
+            }
+        };
+
+        // UI Controls module
+        const UIControls = {
+            init() {
+                this.setupEventListeners();
+                this.loadDownloadCount();
+            },
+
+            setupEventListeners() {
+                document.querySelector('.menu-icon').addEventListener('click', this.openNav);
+                document.querySelector('.closebtn').addEventListener('click', this.closeNav);
+                
+                document.querySelector('.language-toggle').addEventListener('click', () => {
+                    LanguageManager.toggleLanguage();
+                });
+                
+                document.addEventListener('click', (event) => {
+                    const sidebar = document.getElementById('mySidebar');
+                    const menuIcon = document.querySelector('.menu-icon');
+                    
+                    if (!sidebar.contains(event.target) && event.target !== menuIcon && !menuIcon.contains(event.target)) {
+                        this.closeNav();
+                    }
+                });
+            },
+
+            openNav(e) {
+                e.stopPropagation();
+                document.getElementById('mySidebar').classList.add('open');
+            },
+
+            closeNav() {
+                document.getElementById('mySidebar').classList.remove('open');
+            },
+
+            loadDownloadCount() {
+                const count = localStorage.getItem('downloadCount') || 0;
+                document.getElementById('download-count').textContent = count;
+            },
+
+            incrementDownloadCount() {
+                let count = localStorage.getItem('downloadCount') || 0;
+                count = parseInt(count) + 1;
+                localStorage.setItem('downloadCount', count);
+                document.getElementById('download-count').textContent = count;
+            }
+        };
+
+        // Image switcher function
+        function switchImage(src) {
+            document.getElementById('main-image').src = src;
+        }
+
+        // Initialize all functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            LanguageManager.init();
+            UIControls.init();
+        });
+    </script>
 </body>
 </html>

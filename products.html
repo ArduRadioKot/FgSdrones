@@ -1,167 +1,488 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>FgSDRONES</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Jockey+One&display=swap" rel="stylesheet">
+    <title>FgSDRONES | Project Overview</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        :root {
+            --primary: #2A9D8F;
+            --primary-dark: #1D7874;
+            --secondary: #264653;
+            --accent: #E9C46A;
+            --dark: #1A1A2E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+        }
+        
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #2C3E50;
-            color: #FFFFFF;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--secondary);
+            color: var(--light);
+            line-height: 1.6;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
+        
         .header {
-            background-color: #5BAABF;
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
             color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 36px;
-            font-family: 'Jockey One', sans-serif;
-            position: relative;
-            cursor: pointer;
-        }
-        .menu-icon {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
+            padding: 1.5rem 2rem;
+            position: sticky;
             top: 0;
-            right: 0;
-            background-color: #34495E;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-        .content {
-            background-color: #2C3E50;
-            color: white;
-            padding: 20px;
-            font-size: 18px;
-            flex: 1;
-            overflow-y: auto;
-        }
-        .footer {
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
-            justify-content: space-around;
-            background-color: #5BAABF;
-            padding: 10px 0;
+            justify-content: space-between;
+            align-items: center;
         }
-        .footer a {
-            background-color: #5BAABF;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            font-size: 18px;
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
             cursor: pointer;
-            font-family: 'Jersey 20', sans-serif;
-            margin: 0 10px;
+        }
+        
+        .logo i {
+            margin-right: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: -280px;
+            background-color: white;
+            overflow-x: hidden;
+            transition: transform 0.3s ease-out;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            transform: translateX(-280px);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .closebtn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .sidebar-nav {
+            flex-grow: 1;
+        }
+        
+        .sidebar-nav a {
+            display: block;
+            padding: 0.8rem 0;
             text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-nav a:hover {
+            color: var(--primary);
+        }
+        
+        .sidebar-nav a i {
+            margin-right: 0.8rem;
+            width: 24px;
             text-align: center;
         }
-        .footer a:hover {
-            background-color: #4a8a8a;
+        
+        .language-toggle {
+            margin-top: auto;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
         }
-        @media (max-width: 600px) {
-            .content {
-                padding: 10px;
+        
+        .language-toggle:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .project-overview {
+            background-color: var(--primary-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .components-list {
+            margin-bottom: 2rem;
+        }
+        
+        .component {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .component-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+        }
+        
+        .component-desc {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .project-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .footer-link:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .footer-link i {
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
             }
-            .footer a {
-                margin: 5px 0;
-                padding: 10px;
-                font-size: 16px;
+            
+            .project-overview {
+                padding: 1.5rem;
+            }
+            
+            .footer {
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .footer-link {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .project-overview {
+                padding: 1rem;
+            }
+            
+            .footer {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .footer-link {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        FgSDRONES
-        <i class="fas fa-bars menu-icon" onclick="openNav()"></i>
-    </div>
+    <header class="header">
+        <div class="logo" onclick="location.href='index.html'">
+            <i class="fas fa-drone-alt"></i>
+            <span>FgSDRONES</span>
+        </div>
+        <div class="menu-icon" onclick="openNav(event)">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#products">Products</a>
-        <a href="sim.html">Web simulator</a>
-        <a href="#progect2">Unity game</a>
-        <a href="ide.html">Ide and drones</a>
-        <a href="javascript:void(0)" onclick="toggleLanguage()">Switch Language</a>
+        <div class="sidebar-header">
+            <div class="sidebar-title" data-i18n="menu">Menu</div>
+            <div class="closebtn" onclick="closeNav()">&times;</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="products.html"><i class="fas fa-box-open"></i><span data-i18n="sidebar.products">Products</span></a>
+            <a href="sim.html"><i class="fas fa-laptop-code"></i><span data-i18n="sidebar.simulator">Web Simulator</span></a>
+            <a href="game.html"><i class="fas fa-gamepad"></i><span data-i18n="sidebar.unityGame">Unity Game</span></a>
+            <a href="ide.html"><i class="fas fa-code"></i><span data-i18n="sidebar.ide">Drone IDE</span></a>
+            <a href="about.html"><i class="fas fa-file-alt"></i><span data-i18n="sidebar.docs">Documentation</span></a>
+        </nav>
+        <div class="language-toggle" onclick="toggleLanguage()">
+            <i class="fas fa-language"></i> <span data-i18n="language.toggle">Switch Language</span>
+        </div>
     </div>
-    <div class="content" id="content">
-        <p>The project includes the following components:</p>
-        <ul>
-            <li><strong>Web simulator</strong> - designed for quick testing of drone programs without using additional modules.</li>
-            <li><strong>Game</strong> - provides the ability to assemble drones, program them and use them in various scenarios.</li>
-            <li><strong>IDE and code editor</strong> - allow you to create programs for drones and download them directly to devices. It also supports the installation of your own modules to expand the functionality of drones. The list of supported modules can be found in the project documentation.</li>
-        </ul>
-        <p>This project is aimed at a wide audience, including beginners, teachers, organizers and participants of robotics and programming competitions. It provides convenient tools for learning the basics of drone programming, creating your own projects and participating in competitions of various levels.</p>
-    </div>
+
+    <main class="main-content">
+        <div class="project-overview">
+            <h1 class="section-title" data-i18n="overview.title">Project Overview</h1>
+            
+            <div class="components-list">
+                <div class="component">
+                    <h2 class="component-title" data-i18n="components.simulator.title">Web Simulator</h2>
+                    <p class="component-desc" data-i18n="components.simulator.desc">Designed for quick testing of drone programs without using additional modules. Allows you to prototype and debug your drone code in a virtual environment before deploying to real hardware.</p>
+                </div>
+                
+                <div class="component">
+                    <h2 class="component-title" data-i18n="components.game.title">Unity Game</h2>
+                    <p class="component-desc" data-i18n="components.game.desc">Provides the ability to assemble drones, program them and use them in various scenarios. Features an open-world environment where you can test your drones in challenging situations.</p>
+                </div>
+                
+                <div class="component">
+                    <h2 class="component-title" data-i18n="components.ide.title">IDE and Code Editor</h2>
+                    <p class="component-desc" data-i18n="components.ide.desc">Allows you to create programs for drones and download them directly to devices. Supports installation of custom modules to expand drone functionality. The list of supported modules can be found in the project documentation.</p>
+                </div>
+            </div>
+            
+            <div class="project-description" data-i18n="overview.description">
+                <p>This project is aimed at a wide audience, including beginners, teachers, organizers and participants of robotics and programming competitions. It provides convenient tools for learning the basics of drone programming, creating your own projects and participating in competitions of various levels.</p>
+                <p>The intuitive interface and simplified programming language make it accessible to users with no prior experience, while the advanced features satisfy the needs of more experienced developers.</p>
+            </div>
+        </div>
+    </main>
+
     <div class="footer">
-        <a href="sim.html">WEB</a>
-        <a href="ide.html">IDE</a>
-        <a href="game.html">game</a>
+        <a href="sim.html" class="footer-link">
+            <i class="fas fa-laptop-code"></i>
+            <span data-i18n="footer.web">Web Simulator</span>
+        </a>
+        <a href="ide.html" class="footer-link">
+            <i class="fas fa-code"></i>
+            <span data-i18n="footer.ide">Drone IDE</span>
+        </a>
+        <a href="game.html" class="footer-link">
+            <i class="fas fa-gamepad"></i>
+            <span data-i18n="footer.game">Unity Game</span>
+        </a>
     </div>
+
     <script>
-        function openNav() {
-            document.getElementById("mySidebar").style.width = "250px";
-        }
+        // Language management module
+        const LanguageManager = {
+            currentLanguage: 'en',
+            
+            translations: {
+                en: {
+                    "menu": "Menu",
+                    "sidebar.products": "Products",
+                    "sidebar.simulator": "Web Simulator",
+                    "sidebar.unityGame": "Unity Game",
+                    "sidebar.ide": "Drone IDE",
+                    "language.toggle": "Switch to Russian",
+                    "overview.title": "Project Overview",
+                    "components.simulator.title": "Web Simulator",
+                    "components.simulator.desc": "Designed for quick testing of drone programs without using additional modules. Allows you to prototype and debug your drone code in a virtual environment before deploying to real hardware.",
+                    "components.game.title": "Unity Game",
+                    "components.game.desc": "Provides the ability to assemble drones, program them and use them in various scenarios. Features an open-world environment where you can test your drones in challenging situations.",
+                    "components.ide.title": "IDE and Code Editor",
+                    "components.ide.desc": "Allows you to create programs for drones and download them directly to devices. Supports installation of custom modules to expand drone functionality. The list of supported modules can be found in the project documentation.",
+                    "overview.description": "<p>This project is aimed at a wide audience, including beginners, teachers, organizers and participants of robotics and programming competitions. It provides convenient tools for learning the basics of drone programming, creating your own projects and participating in competitions of various levels.</p><p>The intuitive interface and simplified programming language make it accessible to users with no prior experience, while the advanced features satisfy the needs of more experienced developers.</p>",
+                    "footer.web": "Web Simulator",
+                    "footer.ide": "Drone IDE",
+                    "footer.game": "Unity Game"
+                },
+                ru: {
+                    "menu": "Меню",
+                    "sidebar.products": "Продукты",
+                    "sidebar.simulator": "Веб симулятор",
+                    "sidebar.unityGame": "Игра на Unity",
+                    "sidebar.ide": "Редактор кода",
+                    "language.toggle": "Переключить на Английский",
+                    "overview.title": "Обзор проекта",
+                    "components.simulator.title": "Веб симулятор",
+                    "components.simulator.desc": "Предназначен для быстрой проверки программ дронов без использования дополнительных модулей. Позволяет прототипировать и отлаживать код в виртуальной среде перед развертыванием на реальном оборудовании.",
+                    "components.game.title": "Игра на Unity",
+                    "components.game.desc": "Предоставляет возможность собирать дроны, программировать их и использовать в различных сценариях. Включает открытый мир для тестирования дронов в сложных условиях.",
+                    "components.ide.title": "IDE и редактор кода",
+                    "components.ide.desc": "Позволяет создавать программы для дронов и загружать их непосредственно на устройства. Поддерживает установку собственных модулей для расширения функциональности. Список поддерживаемых модулей можно найти в документации проекта.",
+                    "overview.description": "<p>Этот проект ориентирован на широкую аудиторию, включая начинающих, учителей, организаторов и участников соревнований по робототехнике и программированию. Он предоставляет удобные инструменты для изучения основ программирования дронов, создания собственных проектов и участия в соревнованиях различного уровня.</p><p>Интуитивно понятный интерфейс и упрощенный язык программирования делают его доступным для пользователей без опыта, в то время как расширенные функции удовлетворяют потребности более опытных разработчиков.</p>",
+                    "footer.web": "Веб симулятор",
+                    "footer.ide": "Редактор кода",
+                    "footer.game": "Игра"
+                }
+            },
 
-        function closeNav() {
-            document.getElementById("mySidebar").style.width = "0";
-        }
+            init() {
+                this.loadLanguagePreference();
+                this.applyLanguage(this.currentLanguage);
+            },
 
-        function toggleLanguage() {
-            const content = document.getElementById('content');
-            if (content.innerHTML.includes('The project includes the following components:')) {
-                content.innerHTML = `
-                    <p>Проект включает в себя следующие компоненты:</p>
-                    <ul>
-                        <li><strong>Веб-симулятор</strong> - предназначен для быстрой проверки программ дронов без использования дополнительных модулей.</li>
-                        <li><strong>Игра</strong> - предоставляет возможность собирать дроны, программировать их и использовать в различных сценариях.</li>
-                        <li><strong>IDE и редактор кода</strong> - позволяют создавать программы для дронов и загружать их непосредственно на устройства. Также поддерживается установка собственных модулей для расширения функциональности дронов. Список поддерживаемых модулей можно найти в документации проекта.</li>
-                    </ul>
-                    <p>Этот проект ориентирован на широкую аудиторию, включая начинающих, учителей, организаторов и участников соревнований по робототехнике и программированию. Он предоставляет удобные инструменты для изучения основ программирования дронов, создания собственных проектов и участия в соревнованиях различного уровня.</p>
-                `;
-            } else {
-                content.innerHTML = `
-                    <p>The project includes the following components:</p>
-                    <ul>
-                        <li><strong>Web simulator</strong> - designed for quick testing of drone programs without using additional modules.</li>
-                        <li><strong>Game</strong> - provides the ability to assemble drones, program them and use them in various scenarios.</li>
-                        <li><strong>IDE and code editor</strong> - allow you to create programs for drones and download them directly to devices. It also supports the installation of your own modules to expand the functionality of drones. The list of supported modules can be found in the project documentation.</li>
-                    </ul>
-                    <p>This project is aimed at a wide audience, including beginners, teachers, organizers and participants of robotics and programming competitions. It provides convenient tools for learning the basics of drone programming, creating your own projects and participating in competitions of various levels.</p>
-                `;
+            loadLanguagePreference() {
+                const savedLanguage = localStorage.getItem('fgsdronesLanguage');
+                if (savedLanguage) {
+                    this.currentLanguage = savedLanguage;
+                }
+            },
+
+            toggleLanguage() {
+                const newLanguage = this.currentLanguage === 'en' ? 'ru' : 'en';
+                this.setLanguage(newLanguage);
+            },
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('fgsdronesLanguage', lang);
+                this.applyLanguage(lang);
+            },
+
+            applyLanguage(lang) {
+                const translations = this.translations[lang];
+                
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[key]) {
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            element.value = translations[key];
+                        } else {
+                            element.innerHTML = translations[key];
+                        }
+                    }
+                });
             }
-        }
+        };
+
+        // UI Controls module
+        const UIControls = {
+            init() {
+                this.setupEventListeners();
+            },
+
+            setupEventListeners() {
+                document.querySelector('.menu-icon').addEventListener('click', this.openNav);
+                document.querySelector('.closebtn').addEventListener('click', this.closeNav);
+                
+                document.querySelector('.language-toggle').addEventListener('click', () => {
+                    LanguageManager.toggleLanguage();
+                });
+                
+                document.addEventListener('click', (event) => {
+                    const sidebar = document.getElementById('mySidebar');
+                    const menuIcon = document.querySelector('.menu-icon');
+                    
+                    if (!sidebar.contains(event.target) && event.target !== menuIcon && !menuIcon.contains(event.target)) {
+                        this.closeNav();
+                    }
+                });
+            },
+
+            openNav(e) {
+                e.stopPropagation();
+                document.getElementById('mySidebar').classList.add('open');
+            },
+
+            closeNav() {
+                document.getElementById('mySidebar').classList.remove('open');
+            }
+        };
+
+        // Initialize all functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            LanguageManager.init();
+            UIControls.init();
+        });
     </script>
 </body>
 </html>

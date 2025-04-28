@@ -1,140 +1,532 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>FgSDRONES</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Jockey+One&display=swap" rel="stylesheet">
+    <title>FgSDRONES | Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        :root {
+            --primary: #2A9D8F;
+            --primary-dark: #1D7874;
+            --secondary: #264653;
+            --accent: #E9C46A;
+            --dark: #1A1A2E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28A745;
+        }
+        
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #2C3E50;
-            color: #FFFFFF;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--secondary);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
         .header {
-            background-color: #5BAABF;
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
             color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 36px;
-            font-family: 'Jockey One', sans-serif;
-            position: relative;
-            cursor: pointer;
-        }
-        .menu-icon {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
+            padding: 1.5rem 2rem;
             position: fixed;
-            z-index: 1;
+            width: 100%;
             top: 0;
-            right: 0;
-            background-color: #34495E;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: -280px;
+            background-color: white;
             overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
+            transition: transform 0.3s ease-out;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
         }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
+        
+        .sidebar.open {
+            transform: translateX(-280px);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .closebtn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .sidebar-nav {
+            flex-grow: 1;
+        }
+        
+        .sidebar-nav a {
             display: block;
-            transition: 0.3s;
+            padding: 0.8rem 0;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        .sidebar a:hover {
-            background-color: #575757;
+        
+        .sidebar-nav a:hover {
+            color: var(--primary);
         }
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-        .content {
-            padding: 20px;
+        
+        .sidebar-nav a i {
+            margin-right: 0.8rem;
+            width: 24px;
             text-align: center;
         }
-        .content p {
-            font-size: 18px;
+        
+        .language-toggle {
+            margin-top: auto;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .language-toggle:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .doc-container {
+            background-color: var(--primary-dark);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+        }
+        
+        .intro-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
             line-height: 1.6;
+            text-align: center;
         }
-        .buttons {
-            margin: 20px 0;
+        
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
-        .buttons a {
-            display: inline-block;
-            background-color: #5BAABF;
-            color: #FFFFFF;
-            padding: 10px 20px;
-            margin: 0 10px;
+        
+        .download-button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 18px;
-            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
         }
-        .commands {
-            text-align: left;
-            margin: 0 auto;
-            max-width: 600px;
+        
+        .download-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
         }
-        .commands p {
-            font-size: 16px;
+        
+        .download-button i {
+            margin-right: 0.5rem;
+        }
+        
+        .commands-section {
+            margin-top: 2rem;
+        }
+        
+        .commands-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        
+        .command {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .command-name {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .command-desc {
+            font-size: 1rem;
             line-height: 1.6;
         }
-        @media (max-width: 600px) {
-            .content {
-                padding: 10px;
+        
+        .footer {
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
             }
-            .buttons a {
-                margin: 5px 0;
-                padding: 10px;
-                font-size: 16px;
+            
+            .doc-container {
+                padding: 1.5rem;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .download-button {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header" onclick="location.href='index.html'">
-        FgSDRONES
+    <header class="header" onclick="location.href='index.html'">
+        <div class="logo">
+            <i class="fas fa-drone-alt"></i>
+            <span>FgSDRONES</span>
+        </div>
         <div class="menu-icon" onclick="openNav(event)">
             <i class="fas fa-bars"></i>
         </div>
-    </div>
+    </header>
+
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#products" onclick="setLanguage('en')">Products</a>
-        <a href="sim.html" onclick="setLanguage('en')">Web simulator</a>
-        <a href="#progect2" onclick="setLanguage('en')">Unity game</a>
-        <a href="ide.html" onclick="setLanguage('en')">Ide and drones</a>
-        <a href="javascript:void(0)" onclick="toggleLanguage()">Switch Language</a>
-    </div>
-    <div class="content">
-        <p>Язык программирования <strong>FGDS</strong> — самый простой и быстрый язык программирования дронов.<br>
-        Работать с языком очень просто. Сама программа написана в редакторе кода на базе <strong>FrogeeCodeIDE</strong> с простым синтаксисом.</p>
-        <p>скачать документацию можно с сайта</p>
-        <div class="buttons">
-            <a href="#">EN</a>
-            <a href="#">RU</a>
+        <div class="sidebar-header">
+            <div class="sidebar-title" data-i18n="menu">Menu</div>
+            <div class="closebtn" onclick="closeNav()">&times;</div>
         </div>
-        <div class="commands">
-            <p><strong>Команды языка:</strong></p>
-            <p><strong>start();</strong> - команда для запуска квадрокоптера поднимает его в воздух, в следующих версиях в скриптах можно будет указать высоту на которую будет взлетать квадрокоптер.</p>
-            <p><strong>forward();</strong> - команда квадрокоптеру пролететь вперед на определенное количество метров. Расстояние указано в скобках.</p>
-            <p><strong>back();</strong> - команда квадрокоптеру пролететь назад на определенное количество метров. Расстояние указано в скобках.</p>
-            <p><strong>landing();</strong> - команда посадить квадрокоптер на землю.</p>
-            <p><strong>right();</strong> - команда пролететь вправо на определенное количество метров, количество метров указано в скобках.</p>
-            <p><strong>left();</strong> - команда лететь влево на определенное количество метров, количество метров указано в скобках.</p>
-            <p><strong>up(); down(); rotate();</strong> - команды находятся в разработке, в будущем помимо команд появятся условия, циклы и переменные</p>
-            <p>комментарии в коде можно оставлять без специальных символов, интерпретатор их пропустит</p>
+        <nav class="sidebar-nav">
+            <a href="products.html"><i class="fas fa-box-open"></i><span data-i18n="sidebar.products">Products</span></a>
+            <a href="sim.html"><i class="fas fa-laptop-code"></i><span data-i18n="sidebar.simulator">Web Simulator</span></a>
+            <a href="game.html"><i class="fas fa-gamepad"></i><span data-i18n="sidebar.unityGame">Unity Game</span></a>
+            <a href="ide.html"><i class="fas fa-code"></i><span data-i18n="sidebar.ide">Drone IDE</span></a>
+            <a href="about.html"><i class="fas fa-file-alt"></i><span data-i18n="sidebar.docs">Documentation</span></a>
+        </nav>
+        <div class="language-toggle" onclick="toggleLanguage()">
+            <i class="fas fa-language"></i> <span data-i18n="language.toggle">Switch to Russian</span>
         </div>
     </div>
-    <script src="doc.js"></script>
+
+    <main class="main-content">
+        <div class="doc-container">
+            <h1 class="section-title" data-i18n="doc.title">FGDS Programming Language</h1>
+            
+            <p class="intro-text" data-i18n="doc.intro1">
+                The <strong>FGDS</strong> language is the simplest and fastest drone programming language.
+                Working with the language is very easy. The program itself is written in a code editor based on <strong>FrogeeCodeIDE</strong> with simple syntax.
+            </p>
+            
+            <p class="intro-text" data-i18n="doc.intro2">
+                You can download the documentation from the website
+            </p>
+            
+            <div class="download-buttons">
+                <a href="#" class="download-button">
+                    <i class="fas fa-file-download"></i>
+                    <span data-i18n="doc.download.en">English Version</span>
+                </a>
+                <a href="../website/FgDS_documentationRU.pdf" class="download-button">
+                    <i class="fas fa-file-download"></i>
+                    <span data-i18n="doc.download.ru">Russian Version</span>
+                </a>
+            </div>
+            
+            <div class="commands-section">
+                <h2 class="commands-title" data-i18n="doc.commands.title">Language Commands</h2>
+                
+                <div class="command">
+                    <div class="command-name">start();</div>
+                    <p class="command-desc" data-i18n="doc.commands.start">
+                        Command to launch the quadcopter, lifts it into the air. In future versions, scripts will be able to specify the altitude for takeoff.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">forward();</div>
+                    <p class="command-desc" data-i18n="doc.commands.forward">
+                        Command for the quadcopter to fly forward a certain number of meters. The distance is specified in parentheses.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">back();</div>
+                    <p class="command-desc" data-i18n="doc.commands.back">
+                        Command for the quadcopter to fly backward a certain number of meters. The distance is specified in parentheses.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">landing();</div>
+                    <p class="command-desc" data-i18n="doc.commands.landing">
+                        Command to land the quadcopter on the ground.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">right();</div>
+                    <p class="command-desc" data-i18n="doc.commands.right">
+                        Command to fly right a certain number of meters. The distance is specified in parentheses.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">left();</div>
+                    <p class="command-desc" data-i18n="doc.commands.left">
+                        Command to fly left a certain number of meters. The distance is specified in parentheses.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">up(); down(); rotate();</div>
+                    <p class="command-desc" data-i18n="doc.commands.development">
+                        Commands are under development. In the future, in addition to commands, conditions, loops and variables will appear.
+                    </p>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name" data-i18n="doc.commands.comments.title">Comments</div>
+                    <p class="command-desc" data-i18n="doc.commands.comments.desc">
+                        You can leave comments in the code without special characters, the interpreter will skip them.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="copyright" data-i18n="footer.copyright">
+            &copy; 2024 FgSDRONES. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Language management module
+        const LanguageManager = {
+            currentLanguage: 'en',
+            
+            translations: {
+                en: {
+                    "menu": "Menu",
+                    "sidebar.products": "Products",
+                    "sidebar.simulator": "Web Simulator",
+                    "sidebar.unityGame": "Unity Game",
+                    "sidebar.ide": "Drone IDE",
+                    "language.toggle": "Switch to Russian",
+                    "doc.title": "FGDS Programming Language",
+                    "doc.intro1": "The <strong>FGDS</strong> language is the simplest and fastest drone programming language. Working with the language is very easy. The program itself is written in a code editor based on <strong>FrogeeCodeIDE</strong> with simple syntax.",
+                    "doc.intro2": "You can download the documentation from the website",
+                    "doc.download.en": "English Version",
+                    "doc.download.ru": "Russian Version",
+                    "doc.commands.title": "Language Commands",
+                    "doc.commands.start": "Command to launch the quadcopter, lifts it into the air. In future versions, scripts will be able to specify the altitude for takeoff.",
+                    "doc.commands.forward": "Command for the quadcopter to fly forward a certain number of meters. The distance is specified in parentheses.",
+                    "doc.commands.back": "Command for the quadcopter to fly backward a certain number of meters. The distance is specified in parentheses.",
+                    "doc.commands.landing": "Command to land the quadcopter on the ground.",
+                    "doc.commands.right": "Command to fly right a certain number of meters. The distance is specified in parentheses.",
+                    "doc.commands.left": "Command to fly left a certain number of meters. The distance is specified in parentheses.",
+                    "doc.commands.development": "Commands are under development. In the future, in addition to commands, conditions, loops and variables will appear.",
+                    "doc.commands.comments.title": "Comments",
+                    "doc.commands.comments.desc": "You can leave comments in the code without special characters, the interpreter will skip them.",
+                    "footer.copyright": "© 2024 FgSDRONES. All rights reserved."
+                },
+                ru: {
+                    "menu": "Меню",
+                    "sidebar.products": "Продукты",
+                    "sidebar.simulator": "Веб симулятор",
+                    "sidebar.unityGame": "Игра на Unity",
+                    "sidebar.ide": "Редактор кода",
+                    "language.toggle": "Переключить на Английский",
+                    "doc.title": "Язык программирования FGDS",
+                    "doc.intro1": "Язык программирования <strong>FGDS</strong> — самый простой и быстрый язык программирования дронов. Работать с языком очень просто. Сама программа написана в редакторе кода на базе <strong>FrogeeCodeIDE</strong> с простым синтаксисом.",
+                    "doc.intro2": "Скачать документацию можно с сайта",
+                    "doc.download.en": "Английская версия",
+                    "doc.download.ru": "Русская версия",
+                    "doc.commands.title": "Команды языка",
+                    "doc.commands.start": "Команда для запуска квадрокоптера поднимает его в воздух, в следующих версиях в скриптах можно будет указать высоту на которую будет взлетать квадрокоптер.",
+                    "doc.commands.forward": "Команда квадрокоптеру пролететь вперед на определенное количество метров. Расстояние указано в скобках.",
+                    "doc.commands.back": "Команда квадрокоптеру пролететь назад на определенное количество метров. Расстояние указано в скобках.",
+                    "doc.commands.landing": "Команда посадить квадрокоптер на землю.",
+                    "doc.commands.right": "Команда пролететь вправо на определенное количество метров, количество метров указано в скобках.",
+                    "doc.commands.left": "Команда лететь влево на определенное количество метров, количество метров указано в скобках.",
+                    "doc.commands.development": "Команды находятся в разработке, в будущем помимо команд появятся условия, циклы и переменные.",
+                    "doc.commands.comments.title": "Комментарии",
+                    "doc.commands.comments.desc": "Комментарии в коде можно оставлять без специальных символов, интерпретатор их пропустит.",
+                    "footer.copyright": "© 2024 FgSDRONES. Все права защищены."
+                }
+            },
+
+            init() {
+                this.loadLanguagePreference();
+                this.applyLanguage(this.currentLanguage);
+            },
+
+            loadLanguagePreference() {
+                const savedLanguage = localStorage.getItem('fgsdronesLanguage');
+                if (savedLanguage) {
+                    this.currentLanguage = savedLanguage;
+                }
+            },
+
+            toggleLanguage() {
+                const newLanguage = this.currentLanguage === 'en' ? 'ru' : 'en';
+                this.setLanguage(newLanguage);
+            },
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('fgsdronesLanguage', lang);
+                this.applyLanguage(lang);
+            },
+
+            applyLanguage(lang) {
+                const translations = this.translations[lang];
+                
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[key]) {
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            element.value = translations[key];
+                        } else {
+                            element.innerHTML = translations[key];
+                        }
+                    }
+                });
+            }
+        };
+
+        // UI Controls module
+        const UIControls = {
+            init() {
+                this.setupEventListeners();
+            },
+
+            setupEventListeners() {
+                document.querySelector('.menu-icon').addEventListener('click', this.openNav);
+                document.querySelector('.closebtn').addEventListener('click', this.closeNav);
+                
+                document.querySelector('.language-toggle').addEventListener('click', () => {
+                    LanguageManager.toggleLanguage();
+                });
+                
+                document.addEventListener('click', (event) => {
+                    const sidebar = document.getElementById('mySidebar');
+                    const menuIcon = document.querySelector('.menu-icon');
+                    
+                    if (!sidebar.contains(event.target) && event.target !== menuIcon && !menuIcon.contains(event.target)) {
+                        this.closeNav();
+                    }
+                });
+            },
+
+            openNav(e) {
+                e.stopPropagation();
+                document.getElementById('mySidebar').classList.add('open');
+            },
+
+            closeNav() {
+                document.getElementById('mySidebar').classList.remove('open');
+            }
+        };
+
+        // Initialize all functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            LanguageManager.init();
+            UIControls.init();
+        });
+    </script>
 </body>
-</html>
+</html>   

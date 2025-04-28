@@ -1,198 +1,761 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>FgSDRONES</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Jockey+One&display=swap" rel="stylesheet">
+    <title>FgSDRONES | Drone Programming Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
+        :root {
+            --primary: #2A9D8F;
+            --primary-dark: #1D7874;
+            --secondary: #264653;
+            --accent: #E9C46A;
+            --dark: #1A1A2E;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --success: #28A745;
+        }
+        
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
         .header {
-            background-color: #5baabf;
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
             color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 36px;
-            font-family: 'Jockey One', sans-serif;
-            position: relative;
-        }
-        .menu-icon {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .sidebar {
-            height: 100%;
-            width: 0;
+            padding: 1.5rem 2rem;
             position: fixed;
-            z-index: 1;
+            width: 100%;
             top: 0;
-            right: 0;
-            background-color: #34495e;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-        .sidebar a {
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: #575757;
-        }
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-        .main-content {
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
-            flex-wrap: wrap;
-            background-color: #2c3e50;
-            padding: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
-        .main-content > div {
-            flex: 1 1 100%;
-            margin: 5px;
-            height: 500px;
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 0.8rem;
+            color: var(--accent);
+        }
+        
+        .menu-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .menu-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .sidebar {
+            height: 100vh;
+            width: 280px;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: -280px;
+            background-color: white;
+            overflow-x: hidden;
+            transition: transform 0.3s ease-out;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            transform: translateX(-280px);
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .closebtn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .sidebar-nav {
+            flex-grow: 1;
+        }
+        
+        .sidebar-nav a {
+            display: block;
+            padding: 0.8rem 0;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-nav a:hover {
+            color: var(--primary);
+        }
+        
+        .sidebar-nav a i {
+            margin-right: 0.8rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .language-toggle {
+            margin-top: auto;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .language-toggle:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .main {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('copter.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 70vh;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background-color: var(--accent);
+            color: var(--dark);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .projects-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
             position: relative;
         }
-        .image-box {
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--secondary);
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title h2:after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .project-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        
+        .project-image {
+            height: 200px;
             background-size: cover;
             background-position: center;
         }
-        .projects-box {
-            background-image: url('copter.jpg');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            font-family: 'Jersey 20', sans-serif;
+        
+        .project-content {
+            padding: 1.5rem;
         }
-        .socialmedia-section {
-            background-color: #34495e;
+        
+        .project-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary);
+        }
+        
+        .project-content p {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .about-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
             text-align: center;
-            padding: 20px;
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            font-family: 'Jersey 20', sans-serif;
         }
-        .socialmedia-section .icons {
+        
+        .about-content h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+        
+        .about-content p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+        
+        .socialmedia-section {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .social-icons {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
-        .socialmedia-section .icons > a {
-            background-color: #5baabf;
-            width: 100px;
-            height: 100px;
-            margin: 10px;
+        
+        .social-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            color: white;
+            font-size: 1.5rem;
             text-decoration: none;
         }
-        .socialmedia-section .icons > a:hover {
-            background-color: #3a8ca1;
+        
+        .social-icon:hover {
+            transform: translateY(-5px) scale(1.1);
+            background-color: var(--primary-dark);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
-        .socialmedia-section .icons i {
-            font-size: 36px;
-            color: white;
-        }
+        
         .footer {
-            background-color: #5baabf;
+            background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
             color: white;
+            padding: 3rem 2rem 1.5rem;
             text-align: center;
-            padding: 10px;
-            font-size: 18px;
-            font-family: 'Arial', sans-serif;
         }
-        @media (min-width: 600px) {
-            .main-content > div {
-                flex: 1;
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .footer-column h3:after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background-color: var(--accent);
+            bottom: 0;
+            left: 0;
+        }
+        
+        .footer-column p, .footer-column a {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 0.8rem;
+            display: block;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .footer-column h3:after {
+                left: 50%;
+                transform: translateX(-50%);
             }
         }
-        /* Mobile styles */
-        @media (max-width: 599px) {
+        
+        @media (max-width: 480px) {
             .header {
-                font-size: 24px;
+                padding: 1rem;
             }
-            .menu-icon {
-                font-size: 20px;
+            
+            .logo {
+                font-size: 1.4rem;
             }
-            .sidebar a {
-                font-size: 20px;
+            
+            .main {
+                padding: 1rem;
+                margin-top: 70px;
             }
-            .main-content > div {
-                height: 300px; /* Уменьшение высоты для мобильных устройств */
+            
+            .hero {
+                height: 60vh;
+                padding: 1rem;
             }
- .projects-box {
-                font-size: 24px; /* Уменьшение размера шрифта для мобильных устройств */
-            }
-            .socialmedia-section {
-                font-size: 24px; /* Уменьшение размера шрифта для мобильных устройств */
-            }
-            .socialmedia-section .icons > a {
-                width: 80px; /* Уменьшение ширины иконок для мобильных устройств */
-                height: 80px; /* Уменьшение высоты иконок для мобильных устройств */
-            }
-            .footer {
-                font-size: 16px; /* Уменьшение размера шрифта для мобильных устройств */
+            
+            .hero h1 {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        FgSDRONES
-        <div class="menu-icon" onclick="openNav()">
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-drone-alt"></i>
+            <span>FgSDRONES</span>
+        </div>
+        <div class="menu-icon">
             <i class="fas fa-bars"></i>
         </div>
-    </div>
+    </header>
+
     <div id="mySidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="#products" onclick="setLanguage('en')">Products</a>
-        <a href="sim.html" onclick="setLanguage('en')">Web simulator</a>
-        <a href="game.html" onclick="setLanguage('en')">Unity game</a>
-        <a href="ide.html" onclick="setLanguage('en')">Ide and drones</a>
-        <a href="about.html" onclick="setLanguage('en')">Documentation</a>
-        <a href="javascript:void(0)" onclick="toggleLanguage()">Switch Language</a>
-    </div>
-    <div class="main-content">
-        <div class="image-box" style="background-image: url('websim.png');"></div>
-        <div class="projects-box" id="projects">PROGECTS</div>
-        <div class="image-box" style="background-image: url('unity.png');"></div>
-    </div>
-    <div class="socialmedia-section" id="socialmedia">
-        Socialmedia
-        <div class="icons">
-            <a href="https://github.com/ArduRadioKot/FgSdrones/tree/main" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://discord.gg/9WtWwHW3" target="_blank"><i class="fab fa-discord"></i></a>
-            <a href="https://telegram.org" target="_blank"><i class="fab fa-telegram"></i></a>
-            <a href="https://vk.com" target="_blank"><i class="fab fa-vk"></i></a>
+        <div class="sidebar-header">
+            <div class="sidebar-title" data-i18n="menu">Menu</div>
+            <div class="closebtn">&times;</div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="products.html"><i class="fas fa-box-open"></i><span data-i18n="sidebar.products">Products</span></a>
+            <a href="sim.html"><i class="fas fa-laptop-code"></i><span data-i18n="sidebar.simulator">Web Simulator</span></a>
+            <a href="game.html"><i class="fas fa-gamepad"></i><span data-i18n="sidebar.unityGame">Unity Game</span></a>
+            <a href="ide.html"><i class="fas fa-code"></i><span data-i18n="sidebar.ide">Drone IDE</span></a>
+            <a href="about.html"><i class="fas fa-file-alt"></i><span data-i18n="sidebar.docs">Documentation</span></a>
+        </nav>
+        <div class="language-toggle">
+            <i class="fas fa-language"></i> <span data-i18n="language.toggle">Switch to Russian</span>
         </div>
     </div>
-    <div class="footer" id="footer">
-        &copy; 2023 FgSDRONES. All rights reserved.
-    </div>
 
-    <script src="index.js"></script>
+    <main class="main">
+        <section class="hero">
+            <h1 data-i18n="hero.title">Build. Program. Fly.</h1>
+            <p data-i18n="hero.subtitle">FgSDRONES provides cutting-edge tools for drone assembly and programming using the simplified FGD language</p>
+            <a href="products.html" class="btn btn-primary" data-i18n="hero.button">Explore Projects</a>
+        </section>
+
+        <section class="projects-section">
+            <div class="section-title">
+                <h2 data-i18n="projects.title">Our Projects</h2>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('websim.png');"></div>
+                    <div class="project-content">
+                        <h3 data-i18n="projects.webSim.title">Web Simulator</h3>
+                        <p data-i18n="projects.webSim.description">Test your drone code in a virtual environment before deploying to real hardware</p>
+                        <a href="sim.html" class="btn" data-i18n="projects.webSim.button">Try Now</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('unity.png');"></div>
+                    <div class="project-content">
+                        <h3 data-i18n="projects.unityGame.title">Unity Game</h3>
+                        <p data-i18n="projects.unityGame.description">Interactive drone simulation game built with Unity for immersive learning</p>
+                        <a href="game.html" class="btn" data-i18n="projects.unityGame.button">Learn More</a>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background-image: url('code.png');"></div>
+                    <div class="project-content">
+                        <h3 data-i18n="projects.ide.title">IDE & Drones</h3>
+                        <p data-i18n="projects.ide.description">Complete development environment for programming physical drones</p>
+                        <a href="ide.html" class="btn" data-i18n="projects.ide.button">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section">
+            <div class="about-content">
+                <h2 data-i18n="about.title">About FgSDRONES</h2>
+                <p data-i18n="about.text1">The FgSDRONES project is designed to make drone programming accessible to everyone. Using our simplified FGD programming language (based on FroggeeScript), you can easily assemble and program drones for various applications.</p>
+                <p data-i18n="about.text2">Our platform provides all the tools you need - from virtual simulators to physical drone programming environments.</p>
+                <a href="about.html" class="btn btn-primary" data-i18n="about.button">View Documentation</a>
+            </div>
+        </section>
+
+        <section class="socialmedia-section">
+            <div class="section-title">
+                <h2 data-i18n="social.title">Connect With Us</h2>
+            </div>
+            <div class="social-icons">
+                <a href="https://github.com/ArduRadioKot/FgSdrones/tree/main" class="social-icon" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://discord.gg/vZx5PEKW" class="social-icon" target="_blank">
+                    <i class="fab fa-discord"></i>
+                </a>
+                <a href="https://t.me/SIT_chanel" class="social-icon" target="_blank">
+                    <i class="fab fa-telegram"></i>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>FgSDRONES</h3>
+                <p data-i18n="footer.about">Making drone programming accessible and fun for developers of all skill levels.</p>
+                <p><i class="fas fa-map-marker-alt"></i> <span data-i18n="footer.location">Drone Innovation Lab</span></p>
+            </div>
+            <div class="footer-column">
+                <h3 data-i18n="footer.links.title">Quick Links</h3>
+                <a href="products.html" data-i18n="footer.links.products">Products</a>
+                <a href="sim.html" data-i18n="footer.links.simulator">Web Simulator</a>
+                <a href="game.html" data-i18n="footer.links.unityGame">Unity Game</a>
+                <a href="ide.html" data-i18n="footer.links.ide">IDE & Drones</a>
+            </div>
+            <div class="footer-column">
+                <h3 data-i18n="footer.resources.title">Resources</h3>
+                <a href="about.html" data-i18n="footer.resources.docs">Documentation</a>
+                <a href="#" data-i18n="footer.resources.tutorials">Tutorials</a>
+            </div>
+            <div class="footer-column">
+                <h3 data-i18n="footer.contact.title">Contact</h3>
+                <a href="mailto:frogeesoft.team@gmail.com"><i class="fas fa-envelope"></i> frogeesoft.team@gmail.com</a>
+                
+            </div>
+        </div>
+        <div class="copyright" data-i18n="footer.copyright">
+            &copy; 2024 FgSDRONES. All rights reserved. | Designed with <i class="fas fa-heart" style="color: #ff6b6b;"></i> for drone enthusiasts
+        </div>
+    </footer>
+
+    <script>
+        // Language management module
+        const LanguageManager = {
+            currentLanguage: 'en',
+            
+            translations: {
+                en: {
+                    "menu": "Menu",
+                    "sidebar.products": "Products",
+                    "sidebar.simulator": "Web Simulator",
+                    "sidebar.unityGame": "Unity Game",
+                    "sidebar.ide": "Drone IDE",
+                    "sidebar.docs": "Documentation",
+                    "language.toggle": "Switch to Russian",
+                    "hero.title": "Build. Program. Fly.",
+                    "hero.subtitle": "FgSDRONES provides cutting-edge tools for drone assembly and programming using the simplified FGD language",
+                    "hero.button": "Explore Projects",
+                    "projects.title": "Our Projects",
+                    "projects.webSim.title": "Web Simulator",
+                    "projects.webSim.description": "Test your drone code in a virtual environment before deploying to real hardware",
+                    "projects.webSim.button": "Try Now",
+                    "projects.unityGame.title": "Unity Game",
+                    "projects.unityGame.description": "Interactive drone simulation game built with Unity for immersive learning",
+                    "projects.unityGame.button": "Learn More",
+                    "projects.ide.title": "IDE & Drones",
+                    "projects.ide.description": "Complete development environment for programming physical drones",
+                    "projects.ide.button": "Get Started",
+                    "about.title": "About FgSDRONES",
+                    "about.text1": "The FgSDRONES project is designed to make drone programming accessible to everyone. Using our simplified FGD programming language (based on FroggeeScript), you can easily assemble and program drones for various applications.",
+                    "about.text2": "Our platform provides all the tools you need - from virtual simulators to physical drone programming environments.",
+                    "about.button": "View Documentation",
+                    "social.title": "Connect With Us",
+                    "footer.about": "Making drone programming accessible and fun for developers of all skill levels.",
+                    "footer.location": "Drone Innovation Lab",
+                    "footer.links.title": "Quick Links",
+                    "footer.links.products": "Products",
+                    "footer.links.simulator": "Web Simulator",
+                    "footer.links.unityGame": "Unity Game",
+                    "footer.links.ide": "IDE & Drones",
+                    "footer.resources.title": "Resources",
+                    "footer.resources.docs": "Documentation",
+                    "footer.resources.tutorials": "Tutorials",
+                    "footer.resources.api": "API Reference",
+                    "footer.resources.forum": "Community Forum",
+                    "footer.contact.title": "Contact",
+                    "footer.contact.phone": "+1 (555) DRONE-123",
+                    "footer.copyright": "© 2024 FgSDRONES. All rights reserved. | Designed with ♥ for drone enthusiasts"
+                },
+                ru: {
+                    "menu": "Меню",
+                    "sidebar.products": "Продукты",
+                    "sidebar.simulator": "Веб симулятор",
+                    "sidebar.unityGame": "Игра на Unity",
+                    "sidebar.ide": "Редактор кода для квадрокоптера",
+                    "sidebar.docs": "Документация",
+                    "language.toggle": "Переключить на Английский",
+                    "hero.title": "Собирай. Программируй. Летай.",
+                    "hero.subtitle": "FgSDRONES предоставляет передовые инструменты для сборки и программирования дронов с использованием упрощенного языка FGD",
+                    "hero.button": "Исследовать проекты",
+                    "projects.title": "Наши проекты",
+                    "projects.webSim.title": "Веб симулятор",
+                    "projects.webSim.description": "Тестируйте код для дронов в виртуальной среде перед развертыванием на реальном оборудовании",
+                    "projects.webSim.button": "Попробовать",
+                    "projects.unityGame.title": "Игра на Unity",
+                    "projects.unityGame.description": "Интерактивный симулятор дронов для immersive обучения",
+                    "projects.unityGame.button": "Узнать больше",
+                    "projects.ide.title": "IDE и дроны",
+                    "projects.ide.description": "Полноценная среда разработки для программирования физических дронов",
+                    "projects.ide.button": "Начать",
+                    "about.title": "О проекте FgSDRONES",
+                    "about.text1": "Проект FgSDRONES создан, чтобы сделать программирование дронов доступным для всех. Используя наш упрощенный язык программирования FGD (основанный на FroggeeScript), вы можете легко собирать и программировать дроны для различных задач.",
+                    "about.text2": "Наша платформа предоставляет все необходимые инструменты - от виртуальных симуляторов до среды программирования физических дронов.",
+                    "about.button": "Документация",
+                    "social.title": "Свяжитесь с нами",
+                    "footer.about": "Делаем программирование дронов доступным и увлекательным для разработчиков любого уровня.",
+                    "footer.location": "Лаборатория дронов",
+                    "footer.links.title": "Быстрые ссылки",
+                    "footer.links.products": "Продукты",
+                    "footer.links.simulator": "Веб симулятор",
+                    "footer.links.unityGame": "Игра на Unity",
+                    "footer.links.ide": "IDE и дроны",
+                    "footer.resources.title": "Ресурсы",
+                    "footer.resources.docs": "Документация",
+                    "footer.resources.tutorials": "Учебники",
+                    "footer.resources.api": "API документация",
+                    "footer.resources.forum": "Форум сообщества",
+                    "footer.contact.title": "Контакты",
+                    "footer.contact.phone": "+7 (555) ДРОН-123",
+                    "footer.copyright": "© 2024 FgSDRONES. Все права защищены. | Создано с ♥ для энтузиастов дронов"
+                }
+            },
+
+            init() {
+                this.loadLanguagePreference();
+                this.applyLanguage(this.currentLanguage);
+                this.setupLanguageToggle();
+            },
+
+            loadLanguagePreference() {
+                const savedLanguage = localStorage.getItem('fgsdronesLanguage');
+                if (savedLanguage) {
+                    this.currentLanguage = savedLanguage;
+                }
+            },
+
+            toggleLanguage() {
+                const newLanguage = this.currentLanguage === 'en' ? 'ru' : 'en';
+                this.setLanguage(newLanguage);
+            },
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('fgsdronesLanguage', lang);
+                this.applyLanguage(lang);
+            },
+
+            applyLanguage(lang) {
+                const translations = this.translations[lang];
+                
+                // Update all elements with data-i18n attribute
+                document.querySelectorAll('[data-i18n]').forEach(element => {
+                    const key = element.getAttribute('data-i18n');
+                    if (translations[key]) {
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            element.value = translations[key];
+                        } else {
+                            element.innerHTML = translations[key];
+                        }
+                    }
+                });
+            },
+
+            setupLanguageToggle() {
+                document.querySelector('.language-toggle').addEventListener('click', () => {
+                    this.toggleLanguage();
+                });
+            }
+        };
+
+        // UI Controls module
+        const UIControls = {
+            init() {
+                this.setupEventListeners();
+            },
+
+            setupEventListeners() {
+                // Sidebar controls
+                document.querySelector('.menu-icon').addEventListener('click', this.openNav);
+                document.querySelector('.closebtn').addEventListener('click', this.closeNav);
+                
+                // Close sidebar when clicking outside
+                document.addEventListener('click', (event) => {
+                    const sidebar = document.getElementById('mySidebar');
+                    const menuIcon = document.querySelector('.menu-icon');
+                    
+                    if (!sidebar.contains(event.target) && event.target !== menuIcon && !menuIcon.contains(event.target)) {
+                        this.closeNav();
+                    }
+                });
+                
+                // Smooth scrolling for anchor links
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        const targetId = this.getAttribute('href');
+                        if (targetId === '#') return;
+                        
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                            
+                            UIControls.closeNav();
+                        }
+                    });
+                });
+            },
+
+            openNav() {
+                document.getElementById('mySidebar').classList.add('open');
+            },
+
+            closeNav() {
+                document.getElementById('mySidebar').classList.remove('open');
+            }
+        };
+
+        // Initialize all functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            LanguageManager.init();
+            UIControls.init();
+        });
+    </script>
 </body>
 </html>
