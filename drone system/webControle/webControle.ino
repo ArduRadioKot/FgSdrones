@@ -15,12 +15,12 @@ void build(){
 
 void action(){
   if (ui.click()){
-        if (ui.click("up")) Serial.println("up");
-        if (ui.click("frw")) Serial.println("frw");
-        if (ui.click("rgh")) Serial.println("rgh");
-        if (ui.click("lft")) Serial.println("lft");
-        if (ui.click("bck")) Serial.println("bck");
-        if (ui.click("lnd")) Serial.println("lnd");
+        if (ui.click("up")) Serial.println("up()");
+        if (ui.click("frw")) Serial.println("forward()");
+        if (ui.click("rgh")) Serial.println("right()");
+        if (ui.click("lft")) Serial.println("left()");
+        if (ui.click("bck")) Serial.println("back()");
+        if (ui.click("lnd")) Serial.println("land()");
 
   }
 }

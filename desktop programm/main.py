@@ -1,9 +1,10 @@
 import customtkinter as ctk
 import tkinter as tk
-from tkinter import simpledialog, filedialog, messagebox
+from tkinter import simpledialog, filedialog, messagebox, ttk
 import serial
 import serial.tools.list_ports
 import time
+import threading
 ctk.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme("blue")
 
@@ -12,11 +13,36 @@ class textIde(ctk.CTk):
         super().__init__()
 
         self.title("DroneIDE")
-        self.geometry("800x600")
-        self.root = ctk.CTk()
-        self.toolbar = ctk.CTkFrame(self.master, width=50, height=768)
-        self.toolbar.pack(side="left", fill="y")
+        self.geometry("1000x800")
+        
+        # Create main layout
+        self.grid_columnconfigure(1, weight=1)  # Column with editor and terminal should expand
+        self.grid_rowconfigure(0, weight=1)     # Make the main content expand
+        
+        # Toolbar on the left
+        self.toolbar = ctk.CTkFrame(self, width=50)
+        self.toolbar.grid(row=0, column=0, sticky="nsew")
+        
+        # Main content area
+        self.main_content = ctk.CTkFrame(self)
+        self.main_content.grid(row=0, column=1, sticky="nsew")
+        self.main_content.grid_columnconfigure(0, weight=1)
+        self.main_content.grid_rowconfigure(0, weight=3)  # Editor gets 3 parts
+        self.main_content.grid_rowconfigure(1, weight=1)  # Terminal gets 1 part
 
+        # Editor frame
+        self.editor_frame = ctk.CTkFrame(self.main_content)
+        self.editor_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        
+        # Terminal frame
+        self.terminal_frame = ctk.CTkFrame(self.main_content)
+        self.terminal_frame.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
+        
+        # Add separator between editor and terminal
+        self.separator = ttk.Separator(self.main_content, orient='horizontal')
+        self.separator.grid(row=0, column=0, sticky="sew")
+
+        # Toolbar content
         self.label = ctk.CTkLabel(self.toolbar, text="FGSDr", font=("Arial", 15))
         self.label.pack(pady=10)
 
@@ -47,8 +73,12 @@ class textIde(ctk.CTk):
         self.send_line_button = ctk.CTkButton(self.toolbar, text="Send Line", command=self.send_line)
         self.send_line_button.pack(pady=5)
 
-        self.text_area = tk.Text(self, font=("Consolas", 12))
-        self.text_area.pack(fill="both", side=ctk.RIGHT, expand=True)
+        # Editor setup
+        self.line_number_area = tk.Text(self.editor_frame, width=5, font=("Consolas", 12))
+        self.line_number_area.pack(side=ctk.LEFT, fill="y")
+        
+        self.text_area = tk.Text(self.editor_frame, font=("Consolas", 12))
+        self.text_area.pack(side=ctk.LEFT, fill="both", expand=True)
         self.text_area.tag_config('keyword', foreground='#f250e7')  # purple
         self.text_area.tag_config('builtin', foreground='#9950f2')  # blue-violet
         self.text_area.tag_config('string', foreground='#6a8759')  # green
@@ -65,15 +95,42 @@ class textIde(ctk.CTk):
         self.clas = ['class', 'function', '++', '+', '>', '<', '=', '@obj', 'case']
 
         self.text_area.bind("<KeyRelease>", self.highlight_syntax_realtime)  
-        self.line_number_area = tk.Text(self, width=5, height=400, font=("Consolas", 12))
-        self.line_number_area.pack(side=ctk.LEFT, fill="y")
-        self.update_line_numbers()
 
         self.serial_port = None
         self.current_line = 1
         self.text_area.tag_config('current_line', background='yellow')
 
         self.port_combo.bind("<FocusIn>", self.update_ports)
+
+        # Terminal setup
+        self.terminal_header = ctk.CTkFrame(self.terminal_frame)
+        self.terminal_header.pack(fill="x", padx=5, pady=2)
+        
+        self.terminal_label = ctk.CTkLabel(self.terminal_header, text="Serial Port Monitor")
+        self.terminal_label.pack(side="left", padx=5)
+        
+        self.autoscroll_var = tk.BooleanVar(value=True)
+        self.autoscroll_check = ctk.CTkCheckBox(self.terminal_header, text="Autoscroll", variable=self.autoscroll_var)
+        self.autoscroll_check.pack(side="right", padx=5)
+        
+        self.clear_terminal_btn = ctk.CTkButton(self.terminal_header, text="Clear", width=60, command=self.clear_terminal)
+        self.clear_terminal_btn.pack(side="right", padx=5)
+        
+        # Create scrolled text widget for serial output
+        self.serial_output = tk.Text(self.terminal_frame, font=("Consolas", 12), height=8, bg='black', fg='#00FF00')
+        self.serial_output.pack(fill="both", expand=True, padx=5, pady=5)
+        
+        # Configure tags for different message types
+        self.serial_output.tag_configure('received', foreground='#00FF00')  # Зеленый для входящих
+        self.serial_output.tag_configure('sent', foreground='#00FFFF')      # Голубой для исходящих
+        
+        # Add scrollbar to serial output
+        self.serial_scrollbar = ttk.Scrollbar(self.terminal_frame, orient="vertical", command=self.serial_output.yview)
+        self.serial_output.configure(yscrollcommand=self.serial_scrollbar.set)
+        self.serial_scrollbar.pack(side="right", fill="y")
+        
+        # Initialize serial reading flag
+        self.is_reading_serial = False
 
     def get_serial_ports(self):
         """Получить список доступных последовательных портов"""
@@ -101,22 +158,88 @@ class textIde(ctk.CTk):
         if ports and self.port_combo.get() not in ports:
             self.port_combo.set(ports[0])
 
+    def start_serial_monitor(self):
+        """Start monitoring the serial port in a separate thread"""
+        if not self.serial_port or not self.serial_port.is_open:
+            try:
+                selected_port = self.port_combo.get()
+                self.serial_port = serial.Serial(
+                    port=selected_port,
+                    baudrate=115200,
+                    timeout=0.1,  # Уменьшаем timeout для более быстрого чтения
+                    write_timeout=1
+                )
+                time.sleep(0.5)  # Уменьшаем время ожидания после открытия порта
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to open port: {e}")
+                return
+                
+        self.is_reading_serial = True
+        self.serial_thread = threading.Thread(target=self.read_serial, daemon=True)
+        self.serial_thread.start()
+        
+    def stop_serial_monitor(self):
+        """Stop monitoring the serial port"""
+        self.is_reading_serial = False
+        if self.serial_port and self.serial_port.is_open:
+            self.serial_port.close()
+            
+    def log_to_serial_monitor(self, message, message_type='received'):
+        """Add a message to the serial monitor with timestamp"""
+        if not message or message.isspace():
+            return
+        timestamp = time.strftime('%H:%M:%S', time.localtime())
+        direction = '>>' if message_type == 'sent' else '<<'
+        formatted_message = f"[{timestamp}] {direction} {message}\n"
+        self.after(0, self._update_serial_output, formatted_message, message_type)
+        
+    def _update_serial_output(self, message, message_type):
+        """Update the serial monitor with new message"""
+        self.serial_output.insert(tk.END, message, message_type)
+        if self.autoscroll_var.get():
+            self.serial_output.see(tk.END)
+            
+    def read_serial(self):
+        """Read data from serial port and display it in the serial monitor"""
+        while self.is_reading_serial:
+            if self.serial_port and self.serial_port.is_open:
+                try:
+                    if self.serial_port.in_waiting:
+                        data = self.serial_port.read(self.serial_port.in_waiting).decode('utf-8', errors='ignore')
+                        if data:
+                            self.log_to_serial_monitor(data.strip(), 'received')
+                except Exception as e:
+                    error_msg = f"Error reading serial port: {str(e)}"
+                    self.log_to_serial_monitor(error_msg, 'received')
+                    print(error_msg)
+                    break
+            time.sleep(0.01)  # Уменьшаем задержку для более быстрого чтения
+            
     def send_code(self):
-        """Отправить код на выбранный последовательный порт"""
+        """Send code to the selected serial port"""
         if self.serial_port is None or not self.serial_port.is_open:
             try:
                 selected_port = self.port_combo.get()
-                self.serial_port = serial.Serial(selected_port, 9600, timeout=1)
-                time.sleep(2)  # Ждем, чтобы Arduino инициализировался
+                self.serial_port = serial.Serial(
+                    port=selected_port,
+                    baudrate=115200,
+                    timeout=0.1,
+                    write_timeout=1
+                )
+                time.sleep(0.5)
+                # Start serial monitor when connection is established
+                self.start_serial_monitor()
             except Exception as e:
-                messagebox.showerror("Ошибка", f"Не удалось открыть порт: {e}")
+                messagebox.showerror("Error", f"Failed to open port: {e}")
                 return
 
         code = self.text_area.get("1.0", tk.END)
-        self.serial_port.write(code.encode('utf-8'))  # Отправка кода на Arduino
-        time.sleep(2)  # Ждем, чтобы Arduino обработал код
-        print("Код отправлен на Arduino!")
-
+        try:
+            self.serial_port.write(code.encode('utf-8'))
+            self.log_to_serial_monitor(code.strip(), 'sent')
+        except Exception as e:
+            self.log_to_serial_monitor(f"Error sending data: {str(e)}", 'sent')
+            
     def auto_brace(self, event):
         if event.char in "{}[]()<>":
             self.text_area.insert("insert", event.char)
@@ -223,10 +346,11 @@ class textIde(ctk.CTk):
                 self.text_area.insert(tk.END, code)
 
     def quit(self):
+        """Clean up and close the application"""
+        self.stop_serial_monitor()
         if self.serial_port and self.serial_port.is_open:
             self.serial_port.close()
         self.destroy()
-        self.quit()
 
     def highlight_line(self, line_number):
         """Highlights the given line number in the text area."""
@@ -241,25 +365,37 @@ class textIde(ctk.CTk):
         if self.serial_port is None or not self.serial_port.is_open:
             try:
                 selected_port = self.port_combo.get()
-                self.serial_port = serial.Serial(selected_port, 9600, timeout=1)
-                time.sleep(2)  # Ждем, чтобы Arduino инициализировался
+                self.serial_port = serial.Serial(
+                    port=selected_port,
+                    baudrate=115200,
+                    timeout=0.1,
+                    write_timeout=1
+                )
+                time.sleep(0.5)
+                self.start_serial_monitor()
             except Exception as e:
-                messagebox.showerror("Ошибка", f"Не удалось открыть порт: {e}")
+                messagebox.showerror("Error", f"Failed to open port: {e}")
                 return
 
         code = self.text_area.get("1.0", tk.END)
         lines = code.split('\n')
         if self.current_line <= len(lines):
-            line = lines[self.current_line - 1] + '\n'  # Add newline character
-            self.serial_port.write(line.encode('utf-8'))
-            time.sleep(0.1)  # Give some time to process
-            print(f"Отправлена строка {self.current_line}: {line.strip()}")
+            line = lines[self.current_line - 1] + '\n'
+            try:
+                self.serial_port.write(line.encode('utf-8'))
+                self.log_to_serial_monitor(line.strip(), 'sent')
+            except Exception as e:
+                self.log_to_serial_monitor(f"Error sending line: {str(e)}", 'sent')
             self.highlight_line(self.current_line)
             self.current_line += 1
         else:
             messagebox.showinfo("Информация", "Весь код отправлен!")
-            self.text_area.tag_remove('current_line', '1.0', tk.END)  # Remove highlight
-            self.current_line = 1  # Reset line number for next run
+            self.text_area.tag_remove('current_line', '1.0', tk.END)
+            self.current_line = 1
+
+    def clear_terminal(self):
+        """Clear the serial monitor output"""
+        self.serial_output.delete(1.0, tk.END)
 
 if __name__ == "__main__":
     app = textIde()
