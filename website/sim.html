@@ -116,39 +116,55 @@
         @media (max-width: 768px) {
             body {
                 overflow: auto;
-                height: auto;
+                height: 100%;
                 min-height: 100vh;
+                background-color: #f5f6fa;
             }
             
             .container {
                 flex-direction: column;
-                height: auto;
                 min-height: 100vh;
                 overflow: visible;
+                background-color: #f5f6fa;
             }
             
             .left-panel {
                 height: 45vh;
-                min-height: 300px;
-                padding: 10px;
+                min-height: 280px;
+                padding: 15px;
                 position: relative;
-                margin-bottom: 10px;
+                background-color: white;
+                border-radius: 0 0 20px 20px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                margin: 0 0 15px 0;
             }
             
             .grid {
                 max-width: 100%;
                 max-height: 100%;
                 aspect-ratio: 1;
+                background-color: #f8f9fb;
+                border-radius: 15px;
+                padding: 8px;
+            }
+
+            .cell {
+                border-radius: 8px;
+                border: 1px solid #e1e4e8;
+                transition: background-color 0.3s;
             }
             
             .right-panel {
                 width: 100%;
                 height: 55vh;
-                min-height: 400px;
-                padding: 10px;
+                min-height: 380px;
+                padding: 15px;
                 box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
+                background-color: #2c3e50;
+                border-radius: 20px 20px 0 0;
+                margin: 0;
             }
             
             .toolbar {
@@ -156,27 +172,40 @@
                 position: sticky;
                 top: 0;
                 background-color: #2c3e50;
-                padding: 10px 0;
-                margin: 0 0 10px 0;
+                padding: 15px 0;
+                margin: 0 0 15px 0;
                 z-index: 100;
+                border-radius: 20px 20px 0 0;
             }
             
             .toolbar .button {
                 width: 45px;
                 height: 45px;
-                margin: 0 5px;
+                margin: 0 8px;
+                background-color: #34495e;
+                transition: transform 0.2s, background-color 0.2s;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .toolbar .button:active {
+                transform: scale(0.95);
+                background-color: #2980b9;
             }
             
             .code-editor {
                 flex: 1;
                 min-height: 200px;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 position: relative;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             }
             
             .CodeMirror {
                 font-size: 14px;
                 height: 100% !important;
+                border-radius: 12px;
             }
             
             .test-button {
@@ -184,19 +213,32 @@
                 font-size: 16px;
                 margin-top: auto;
                 position: sticky;
-                bottom: 10px;
+                bottom: 15px;
+                border-radius: 12px;
+                background-color: #3498db;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                transition: transform 0.2s, background-color 0.2s;
+            }
+
+            .test-button:active {
+                transform: scale(0.98);
+                background-color: #2980b9;
             }
             
             /* Block editor mobile styles */
             .block-editor {
                 flex: 1;
                 min-height: 200px;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
+                border-radius: 12px;
+                overflow: hidden;
             }
             
             .block-container {
                 flex-direction: column;
                 height: 100%;
+                border-radius: 12px;
+                overflow: hidden;
             }
             
             .block-toolbox {
@@ -205,19 +247,37 @@
                 flex-shrink: 0;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
+                background-color: #34495e;
+                padding: 15px;
+                border-radius: 12px 12px 0 0;
             }
             
             .block-workspace {
                 height: 65%;
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
-                padding: 10px;
+                padding: 15px;
+                background-color: #2c3e50;
+                border-radius: 0 0 12px 12px;
             }
             
             .block {
                 padding: 12px 16px;
                 font-size: 16px;
                 touch-action: none;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                margin: 8px 0;
+            }
+
+            .block.event {
+                background-color: #e74c3c;
+                background-image: linear-gradient(135deg, #e74c3c, #c0392b);
+            }
+
+            .block.movement {
+                background-color: #3498db;
+                background-image: linear-gradient(135deg, #3498db, #2980b9);
             }
 
             /* Fix for touch scrolling */
@@ -231,29 +291,36 @@
                 background-color: rgba(255, 255, 255, 0.2);
                 border-radius: 3px;
             }
+
+            /* Fix for robot positioning */
+            .robot {
+                width: 35px;
+                height: 35px;
+                transition: all 0.3s ease;
+            }
         }
         
         /* Small mobile devices */
         @media (max-width: 480px) {
             .left-panel {
                 height: 40vh;
-                min-height: 250px;
-                padding: 5px;
+                min-height: 240px;
+                padding: 10px;
             }
             
             .right-panel {
                 height: 60vh;
-                padding: 5px;
+                padding: 10px;
             }
             
             .toolbar {
-                padding: 5px 0;
+                padding: 10px 0;
             }
             
             .toolbar .button {
                 width: 40px;
                 height: 40px;
-                margin: 0 3px;
+                margin: 0 5px;
             }
             
             .CodeMirror {
@@ -268,38 +335,57 @@
             .test-button {
                 height: 45px;
                 font-size: 15px;
-                margin-top: 5px;
+                margin-top: 10px;
+            }
+
+            .robot {
+                width: 30px;
+                height: 30px;
             }
         }
         
         /* Landscape orientation */
         @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                overflow: hidden;
+                height: 100vh;
+            }
+
             .container {
                 flex-direction: row;
                 height: 100vh;
                 overflow: hidden;
+                background-color: #f5f6fa;
             }
             
             .left-panel {
                 width: 45%;
                 height: 100vh;
-                margin-bottom: 0;
+                margin: 0;
+                border-radius: 0 20px 20px 0;
             }
             
             .right-panel {
                 width: 55%;
                 height: 100vh;
                 overflow-y: auto;
+                border-radius: 20px 0 0 0;
             }
 
             .toolbar {
                 position: sticky;
                 top: 0;
+                border-radius: 20px 0 0 0;
             }
 
             .test-button {
                 position: sticky;
-                bottom: 10px;
+                bottom: 15px;
+            }
+
+            .robot {
+                width: 35px;
+                height: 35px;
             }
         }
 
@@ -422,9 +508,9 @@
         
         <div class="code-editor" id="text-editor">
             <textarea class="code-editor-content" id="code">drone.init()
-                drone.forward(1)
-                drone.back(1)
-                drone.landing()</textarea>
+drone.forward(1)
+drone.back(1)
+drone.landing()</textarea>
         </div>
         
         <div class="block-editor" id="block-editor">
