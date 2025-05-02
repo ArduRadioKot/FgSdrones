@@ -117,18 +117,22 @@
             body {
                 overflow: auto;
                 height: auto;
+                min-height: 100vh;
             }
             
             .container {
                 flex-direction: column;
                 height: auto;
+                min-height: 100vh;
                 overflow: visible;
             }
             
             .left-panel {
-                height: 50vh;
+                height: 45vh;
                 min-height: 300px;
                 padding: 10px;
+                position: relative;
+                margin-bottom: 10px;
             }
             
             .grid {
@@ -139,57 +143,93 @@
             
             .right-panel {
                 width: 100%;
-                height: 50vh;
+                height: 55vh;
                 min-height: 400px;
                 padding: 10px;
                 box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
             }
             
             .toolbar {
                 justify-content: center;
+                position: sticky;
+                top: 0;
+                background-color: #2c3e50;
+                padding: 10px 0;
+                margin: 0 0 10px 0;
+                z-index: 100;
             }
             
             .toolbar .button {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
+                margin: 0 5px;
             }
             
             .code-editor {
-                height: calc(100% - 130px);
+                flex: 1;
+                min-height: 200px;
+                margin-bottom: 10px;
+                position: relative;
             }
             
             .CodeMirror {
                 font-size: 14px;
+                height: 100% !important;
             }
             
             .test-button {
-                height: 60px;
-                font-size: 18px;
+                height: 50px;
+                font-size: 16px;
+                margin-top: auto;
+                position: sticky;
+                bottom: 10px;
             }
             
             /* Block editor mobile styles */
             .block-editor {
-                height: calc(100% - 130px);
+                flex: 1;
+                min-height: 200px;
+                margin-bottom: 10px;
             }
             
             .block-container {
                 flex-direction: column;
+                height: 100%;
             }
             
             .block-toolbox {
                 width: 100%;
-                height: auto;
-                max-height: 30%;
+                max-height: 35%;
                 flex-shrink: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
             }
             
             .block-workspace {
-                height: 70%;
+                height: 65%;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                padding: 10px;
             }
             
             .block {
                 padding: 12px 16px;
                 font-size: 16px;
+                touch-action: none;
+            }
+
+            /* Fix for touch scrolling */
+            .block-toolbox::-webkit-scrollbar,
+            .block-workspace::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .block-toolbox::-webkit-scrollbar-thumb,
+            .block-workspace::-webkit-scrollbar-thumb {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-radius: 3px;
             }
         }
         
@@ -198,24 +238,37 @@
             .left-panel {
                 height: 40vh;
                 min-height: 250px;
+                padding: 5px;
             }
             
             .right-panel {
                 height: 60vh;
+                padding: 5px;
+            }
+            
+            .toolbar {
+                padding: 5px 0;
             }
             
             .toolbar .button {
                 width: 40px;
                 height: 40px;
+                margin: 0 3px;
             }
             
             .CodeMirror {
-                font-size: 12px;
+                font-size: 13px;
             }
             
             .block {
                 padding: 10px 14px;
                 font-size: 14px;
+            }
+
+            .test-button {
+                height: 45px;
+                font-size: 15px;
+                margin-top: 5px;
             }
         }
         
@@ -224,16 +277,29 @@
             .container {
                 flex-direction: row;
                 height: 100vh;
+                overflow: hidden;
             }
             
             .left-panel {
-                width: 50%;
+                width: 45%;
                 height: 100vh;
+                margin-bottom: 0;
             }
             
             .right-panel {
-                width: 50%;
+                width: 55%;
                 height: 100vh;
+                overflow-y: auto;
+            }
+
+            .toolbar {
+                position: sticky;
+                top: 0;
+            }
+
+            .test-button {
+                position: sticky;
+                bottom: 10px;
             }
         }
 
